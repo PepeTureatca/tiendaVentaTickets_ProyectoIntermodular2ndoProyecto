@@ -15,7 +15,7 @@ if(mysqli_num_rows($query) > 0) {
 }
 
 if(isset($_POST['update_profile'])) {
-   date_default_timezone_set('Asia/Singapore');
+   date_default_timezone_set('Europe/Madrid');
    $firstmsg = 'Registros actualizados por última vez a las '.date('h:i:s A');
 
    $update_name = mysqli_real_escape_string($conn, $_POST['update_name']);
