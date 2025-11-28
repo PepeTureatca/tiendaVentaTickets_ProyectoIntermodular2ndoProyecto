@@ -44,7 +44,6 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
     <title>Página Principal</title>
     <link rel="icon" type="image/x-icon" href="css/images/logo.png">
     <link rel="stylesheet" href="css/homepage.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 
 <body>
@@ -81,7 +80,7 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
         <div class="content">
             <img src="css/images/bghome.png" class="musilogo">
 
-            <h3>Tu Universo de Entradas Musicales <span>/ MUSIVERSE.PH</span></h3>
+            <h3>Tu Universo de Entradas Musicales <span>/ MUSIVERSE.ES</span></h3>
             <a href="ticketshistory.php" class="btn">Mis Entradas</a>
         </div>
 
