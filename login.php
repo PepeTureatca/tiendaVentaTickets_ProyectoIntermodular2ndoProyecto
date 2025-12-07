@@ -1,8 +1,21 @@
 <?php
 session_start();
 include 'config.php';
+require_once 'vendor/autoload.php';  // Incluye el autoload de Composer para las librerías de Google
+
+// Configuración del cliente de Google
+$client = new Google\Client();
+$client->setClientId('678074892690-tki3sme5mv8r55k92188622h5mep16er.apps.googleusercontent.com');  
+$client->setClientSecret('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'); 
+$client->setRedirectUri('http://localhost/eventosTickets/login-callback.php');  // Asegúrate de que esta URI sea la misma en ambos archivos
+$client->addScope("email");
+$client->addScope("profile");
+
+// Genera la URL de autenticación para Google
+$login_url = $client->createAuthUrl();
 
 if(isset($_POST['submit'])) {
+    // Login normal con email y contraseña
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $pass = mysqli_real_escape_string($conn, md5($_POST['password']));
     $select = mysqli_query($conn, "SELECT * FROM `user_form` WHERE email = '$email' AND password = '$pass'") or die('query failed');
@@ -32,7 +45,6 @@ if(isset($_POST['submit'])) {
     <title>Iniciar Sesión</title>
     <link rel="icon" type="image/x-icon" href="css/images/logo.png">
     <link rel="stylesheet" href="css/profile.css">
-
 </head>
 <body>
     <div class="form-container">

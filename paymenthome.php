@@ -4,8 +4,7 @@ include 'config.php';
 $user_id = $_SESSION['user_id'];
 
 // Obtener la tarjeta actual del usuario
-$select = mysqli_query($conn, "SELECT * FROM `tblpayment` WHERE userid = '$user_id'") 
-    or die('La consulta falló');
+$select = mysqli_query($conn, "SELECT * FROM `tblpayment` WHERE userid = '$user_id'") or die('La consulta falló');
 
 if (mysqli_num_rows($select) > 0) {
     $fetch = mysqli_fetch_assoc($select);
@@ -37,12 +36,12 @@ if (mysqli_num_rows($select) > 0) {
             </div>
             <div class="card-number-box">
                 <?php
-                if (isset($fetch['cardnum']) && !empty($fetch['cardnum'])) {
-                    $cardNumber = $fetch['cardnum'];
+                if (isset($fetch['card_number']) && !empty($fetch['card_number'])) {
+                    $cardNumber = $fetch['card_number'];
                     $splitCardNumber = implode('-', str_split($cardNumber, 4));
                     echo $splitCardNumber;
                 } else {
-                    echo '4444-5555-2222-4444';
+                    echo '1234-5678-9012-3456';
                 }
                 ?>
             </div>
@@ -86,7 +85,7 @@ if (mysqli_num_rows($select) > 0) {
             </label>
 
             <label class="radio">
-                <input type="radio" required name="radio" onclick="detectCardType('css/paymentimg/visa.png')"
+                <input type="radio" required name="radio" onclick="detectCardType('/var/www/html/eventosTickets/css/paymentimg/visa.png')"
                     <?php echo (isset($fetch['cardtype']) && $fetch['cardtype'] === 'Visa') ? 'checked' : ''; ?> value="Visa">
                 <span class="name">Visa</span>
             </label>
@@ -96,7 +95,7 @@ if (mysqli_num_rows($select) > 0) {
             <span>Número de tarjeta</span>
             <input type="text" required maxlength="19" class="card-number-input" id="cardnumber" name="cardnumber"
                    placeholder="1234-5678-9012-3456"
-                   value="<?php echo isset($fetch['cardnum']) ? $fetch['cardnum'] : ''; ?>"
+                   value="<?php echo isset($fetch['card_number']) ? $fetch['card_number'] : ''; ?>"
                    oninput="formatCardNumberInput(this)">
         </div>
 
@@ -155,7 +154,7 @@ if (mysqli_num_rows($select) > 0) {
 <?php
 if (isset($_POST['link'])) {
 
-    $cardNumber = str_replace("-", "", $_POST['cardnumber']);
+    $cardNumber = str_replace("-", "", $_POST['cardnumber']);  // Elimina los guiones
     $cardHolder = mysqli_real_escape_string($conn, $_POST['cardname']);
     $monthExp = $_POST['expmonth'];
     $yearExp = $_POST['expyear'];
@@ -195,7 +194,7 @@ if (isset($_POST['link'])) {
             // Actualizar tarjeta existente
             $update = mysqli_query($conn,
                 "UPDATE `tblpayment`
-                 SET cardnum='$cardNumber', cardholder='$cardHolder', monthexp='$monthExp',
+                 SET card_number='$cardNumber', cardholder='$cardHolder', monthexp='$monthExp',
                      yearexp='$yearExp', cvv='$cvv', cardtype='$cardType', pin='$pinAsString',
                      status='Vinculada'
                  WHERE userid='$user_id'"
@@ -203,14 +202,17 @@ if (isset($_POST['link'])) {
         } else {
             // Insertar nueva tarjeta
             $update = mysqli_query($conn,
-                "INSERT INTO `tblpayment` (userid, cardnum, cardholder, monthexp, yearexp, cvv, cardtype, pin, status)
+                "INSERT INTO `tblpayment` (userid, card_number, cardholder, monthexp, yearexp, cvv, cardtype, pin, status)
                  VALUES ('$user_id','$cardNumber','$cardHolder','$monthExp','$yearExp','$cvv','$cardType','$pinAsString','Vinculada')"
             );
         }
 
         if ($update) {
             echo "<p style='background-color:green;color:white;'>¡Tarjeta vinculada exitosamente!</p>";
-            echo "<script>setTimeout(()=>{ window.location.reload(); },1500);</script>";
+
+            // Redirigir para evitar reenvío de formulario
+            header("Location: " . $_SERVER['REQUEST_URI']);
+            exit; // Detener el script después de la redirección
         } else {
             echo "<p style='background-color:red;color:white;'>Error al vincular la tarjeta. Intente de nuevo.</p>";
         }
@@ -273,4 +275,3 @@ document.querySelector('.cvv-input').oninput = () => {
 
 </body>
 </html>
-

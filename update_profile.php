@@ -5,13 +5,14 @@ include 'config.php';
 $user_id = $_SESSION['user_id'];
 
 if(isset($user_id)) {
+    // El usuario está logueado
 } else {
-   echo "El ID de usuario no está definido en la sesión.";
+    echo "El ID de usuario no está definido en la sesión.";
 }
 
 $query = mysqli_query($conn, "SELECT * FROM `user_form` WHERE id = '$user_id'") or die('query failed');
 if(mysqli_num_rows($query) > 0) {
-   $fetch = mysqli_fetch_assoc($query);
+    $fetch = mysqli_fetch_assoc($query);
 }
 
 if(isset($_POST['update_profile'])) {
@@ -104,8 +105,9 @@ if(isset($_POST['update_profile'])) {
    }
 
 } else if(isset($_POST['proceed_payment'])) {
-   header('location:paymenthome.php');
+    header('location:paymenthome.php');
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -133,9 +135,16 @@ if(isset($_POST['update_profile'])) {
 
          <?php
          if($fetch['image'] == '') {
+            // Si la imagen está vacía, mostramos una imagen por defecto
             echo '<img src="css/images/avatar.png">';
          } else {
-            echo '<img src="uploaded_img/'.$fetch['image'].'">';
+            // Si hay una URL en la base de datos, verificamos si es válida
+            if (filter_var($fetch['image'], FILTER_VALIDATE_URL)) {
+                echo '<img src="'.$fetch['image'].'" alt="Foto de perfil" class="profile-img">';
+            } else {
+                // Si no es una URL, buscamos la imagen almacenada en el servidor
+                echo '<img src="uploaded_img/'.$fetch['image'].'" alt="Foto de perfil" class="profile-img">';
+            }
          }
 
          if(isset($firstmsg)) {
