@@ -1,11 +1,37 @@
 <?php
-include 'config.php';
 session_start();
+require_once 'vendor/autoload.php';  // Asegúrate de que esto esté incluido en home.php
+include 'config.php';  // Conexión a la base de datos
 
-if(isset($_SESSION['user_id'])) {
+// Verifica si el usuario está logueado
+if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 } else {
     $user_id = null;
+}
+
+// Verifica si el usuario ha solicitado cerrar sesión
+if (isset($_GET['logout'])) {
+    // Cierra la sesión local
+    session_destroy();
+    
+    // Borra la cookie de Google si existe
+    if (isset($_SESSION['access_token'])) {
+        // Aquí eliminamos el token de acceso de Google
+        $client = new Google\Client();
+        $client->setClientId('TU_CLIENT_ID');
+        $client->setClientSecret('TU_CLIENT_SECRET');
+        
+        // Revoca el token de acceso
+        $client->revokeToken($_SESSION['access_token']);
+        
+        // Borra la cookie que guarda el token
+        unset($_SESSION['access_token']);
+    }
+    
+    // Redirige a la página de login
+    header("Location: login.php");
+    exit();
 }
 
 $sql = "SELECT * FROM tblconcert";
@@ -18,12 +44,6 @@ if(mysqli_num_rows($select) > 0) {
     $fetch = null;
 }
 
-if(isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: login.php");
-    exit();
-}
-
 $itemsPerPage = 3;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $itemsPerPage;
@@ -33,6 +53,8 @@ $all_concert = $conn->query($sql);
 $totalConcerts = $conn->query("SELECT COUNT(*) FROM tblconcert")->fetch_row()[0];
 $totalPages = ceil($totalConcerts / $itemsPerPage);
 ?>
+
+<!-- Aquí va todo tu código HTML y la estructura de la página -->
 
 <!DOCTYPE html>
 <html lang="es">
@@ -50,7 +72,6 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
 <body>
 
     <header class="header" style="box-shadow:0 10px 10px rgba(0,0,0,.2);">
-
         <a href="home.php" class="logo">
             <i class="fas fa-music" style="color: #00ADB5;"></i>
             <span style="color:#00ADB5;">Musi</span>Verse</a>
@@ -62,7 +83,7 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
             <a href="#contact">Contáctanos</a>
             <a href="ticketshistory.php">Mis Entradas</a>
             <a href="update_profile.php">Perfil</a>
-            <a href="login.php?logout=1 " class="logout">Cerrar Sesión</a>
+            <a href="home.php?logout=1" class="logout">Cerrar Sesión</a>
         </nav>
 
         <div id="menu-bars" class="fas fa-bars"></div>
@@ -74,7 +95,7 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
         <div class="wrapper">
             <div class="box">
                 <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
+                <div></div><div></div><div></div><div></div>
             </div>
         </div>
 
@@ -83,21 +104,6 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
 
             <h3>Tu Universo de Entradas Musicales <span>/ MUSIVERSE.PH</span></h3>
             <a href="ticketshistory.php" class="btn">Mis Entradas</a>
-        </div>
-
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide"><img src="css/images/card1.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card2.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card3.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card4.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card5.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card6.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card7.jpg" /></div>
-                <div class="swiper-slide"><img src="css/images/card8.png" /></div>
-                <div class="swiper-slide"><img src="css/images/card9.png" /></div>
-            </div>
-            <div class="swiper-pagination"></div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -269,29 +275,6 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
 
         <div id="next" onclick="next()">></div>
         <div id="prev" onclick="prev()"><</div>
-
-    </div>
-</section>
-
-<section class="personnel" id="Meet">
-    <a href="#Meet">
-        <h3>CONOCE <span>AL EQUIPO</span></h3>
-    </a>
-
-    <p class="persondesc">
-        En Musiverse, cada increíble experiencia musical es posible gracias
-        a un equipo lleno de pasión y talento.
-    </p>
-
-    <div id="personcontainer">
-
-        <br><br>
-        <div class="teamcon"></div>
-
-        <div class="sub-container"><img src="css/images/person1.png"></div>
-        <div class="sub-container"><img src="css/images/person2.png"></div>
-        <div class="sub-container"><img src="css/images/person3.png"></div>
-        <div class="sub-container"><img src="css/images/person4.png"></div>
 
     </div>
 </section>
