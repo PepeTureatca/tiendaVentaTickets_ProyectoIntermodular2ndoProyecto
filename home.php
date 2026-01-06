@@ -54,8 +54,6 @@ $totalConcerts = $conn->query("SELECT COUNT(*) FROM tblconcert")->fetch_row()[0]
 $totalPages = ceil($totalConcerts / $itemsPerPage);
 ?>
 
-<!-- Aquí va todo tu código HTML y la estructura de la página -->
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -66,6 +64,102 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
     <title>Página Principal</title>
     <link rel="icon" type="image/x-icon" href="css/images/logo.png">
     <link rel="stylesheet" href="css/homepage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        /* Sección de los conciertos */
+        #concerts .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;  /* Distribuye las tarjetas de forma equilibrada */
+            gap: 20px;  /* Espacio entre las tarjetas */
+        }
+
+        /* Estilo de las tarjetas */
+        #concerts .card {
+            width: 250px;  /* Tamaño adecuado para las tarjetas */
+            height: auto;  /* Ajusta la altura automáticamente */
+            margin: 15px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);  /* Sombra más suave */
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Efecto hover más sutil */
+        #concerts .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Ajuste de las imágenes dentro de las tarjetas */
+        #concerts .card .imgBx {
+            width: 100%;
+            height: 150px;  /* Ajuste de la altura de la imagen */
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        #concerts .card .imgBx img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;  /* Asegura que la imagen cubra el área sin distorsionarse */
+        }
+
+        /* Título de la tarjeta */
+        #concerts .card h2 {
+            font-size: 18px;  /* Aumentar un poco el tamaño del título */
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Descripción dentro de la tarjeta */
+        #concerts .card .desc p {
+            font-size: 14px;  /* Tamaño más pequeño para la descripción */
+            color: #555;
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Botón dentro de la tarjeta */
+        #concerts .card .button-container a {
+            font-size: 14px;  /* Ajuste del tamaño del texto del botón */
+            padding: 8px 15px;
+            background-color: #00ADB5;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #concerts .card .button-container a:hover {
+            background-color: #007c80;
+        }
+
+        /* Ajustes para la paginación */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            background-color: #00ADB5;
+            color: white;
+            text-decoration: none;
+        }
+
+        .pagination a.active {
+            background-color: #007c80;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -101,7 +195,7 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
         <div class="content">
             <img src="css/images/bghome.png" class="musilogo">
 
-            <h3>Tu Universo de Entradas Musicales <span>/ MUSIVERSE.ES</span></h3>
+            <h3>Tu Universo de Entradas Musicales <span>/ MUSIVERSE.PH</span></h3>
             <a href="ticketshistory.php" class="btn">Mis Entradas</a>
         </div>
 
@@ -116,6 +210,7 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
                 </p>
             </div>
 
+            <!-- Paginación -->
             <?php
             $startPage = max(1, $page - 2);
             $endPage = min($totalPages, $startPage + 4);
@@ -143,6 +238,7 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
 
             <br>
 
+            <!-- Mostrar conciertos -->
             <?php
             while($row = $all_concert->fetch_assoc()) {
                 $concertId = $row["concert_id"];
@@ -153,205 +249,28 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
                         <div class="imgBx">
                             <a href="#">
                                 <?php echo '<img src="adminside/uploaded_img/'.$row["image"].'">'; ?>
-                                <h2><br><?php echo $row["concert_name"]; ?></h2>
-                                <div class="desc">
-                                    <p><br>
-                                        Artista: <?php echo $row["concert_artist"]; ?><br>
-                                        Fecha del Concierto: <?php echo date('F j, Y', strtotime($row['concert_date'])); ?><br>
-                                        ID del Concierto: <?php echo $row["concert_id"]; ?><br>
-                                        Género: <?php echo $row["concert_genre"]; ?><br>
-                                        Lugar: <?php echo $row["concert_venue"]; ?>
-                                    </p>
-                                </div>
-                                <div class="button-container">
-                                    <a class="button" href="<?php echo $url; ?>">Ver Más</a>
-                                </div>
+                            </a>
+                        </div>
+                        <h2><?php echo $row["concert_name"]; ?></h2>
+                        <div class="desc">
+                            <p>
+                                Artista: <?php echo $row["concert_artist"]; ?><br>
+                                Fecha del Concierto: <?php echo date('F j, Y', strtotime($row['concert_date'])); ?><br>
+                                ID del Concierto: <?php echo $row["concert_id"]; ?><br>
+                                Género: <?php echo $row["concert_genre"]; ?><br>
+                                Lugar: <?php echo $row["concert_venue"]; ?>
+                            </p>
+                        </div>
+                        <div class="button-container">
+                            <a href="<?php echo $url; ?>" class="button">Ver Más</a>
                         </div>
                     </div>
                 </div>
             <?php } ?>
         </section>
     </section>
-
-<section class="about" id="about">
-    <br><br><br>
-    <h3>Sobre Nosotros</h3>
-    <p style="margin:50px;">
-        En Musiverse, te llevamos a un universo lleno de experiencias musicales inolvidables.
-        Disfruta de conciertos con artistas reconocidos y una mezcla vibrante de géneros musicales.
-    </p>
-
-    <div class="card-aboutus">
-
-        <div class="cardcon">
-            <img src="css/images/aboutus1.png">
-            <div class="card-aboutcon">
-                <h1>Selección de Conciertos Inigualable</h1>
-                <p>
-                    Ofrecemos una variedad diversa de conciertos para todos los gustos musicales:
-                    pop, jazz, rock y mucho más.
-                </p>
-                <a href="#contact" class="card-button">Leer Más</a>
-            </div>
-        </div>
-
-        <div class="cardcon">
-            <img src="css/images/aboutus2.png">
-            <div class="card-aboutcon">
-                <h1>Compra de Entradas Fácil</h1>
-                <p>
-                    Explora eventos, elige tus asientos y paga fácilmente. Métodos de pago seguros
-                    y confirmación instantánea.
-                </p>
-                <a href="#contact" class="card-button">Leer Más</a>
-            </div>
-        </div>
-
-        <div class="cardcon">
-            <img src="css/images/aboutus3.png">
-            <div class="card-aboutcon">
-                <h1>Comprometidos con tu Experiencia</h1>
-                <p>
-                    Un concierto es más que un evento: es una experiencia. Te brindamos información
-                    útil sobre recintos, artistas y recomendaciones.
-                </p>
-                <a href="#contact" class="card-button">Leer Más</a>
-            </div>
-        </div>
-
-        <div class="cardcon">
-            <img src="css/images/aboutus4.png">
-            <div class="card-aboutcon">
-                <h1>Cartel de Artistas Increíble</h1>
-                <p>
-                    Desde estrellas globales hasta nuevos talentos, nuestra plataforma reúne lo mejor
-                    del entretenimiento en vivo.
-                </p>
-                <a href="#contact" class="card-button">Leer Más</a>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<section class="service">
-    <div class="services">
-
-        <div class="slide-container active">
-            <div class="slide">
-                <div class="servicecon">
-                    <h3>¿Qué métodos de pago aceptan?</h3>
-                    <p>
-                        Aceptamos tarjetas de crédito, débito y pagos en efectivo.
-                    </p>
-                    <a href="faq.html" class="btn">Saber Más</a>
-                </div>
-                <video src="css/images/concert1.mp4" muted autoplay loop></video>
-            </div>
-        </div>
-
-        <div class="slide-container">
-            <div class="slide">
-                <div class="servicecon">
-                    <h3>¿Cómo puedo enterarme de los próximos conciertos?</h3>
-                    <p>Suscríbete a nuestro boletín o síguenos en redes sociales.</p>
-                    <a href="faq.html" class="btn">Saber Más</a>
-                </div>
-                <video src="css/images/concert2.mp4" muted autoplay loop></video>
-            </div>
-        </div>
-
-        <div class="slide-container">
-            <div class="slide">
-                <div class="servicecon">
-                    <h3>¿Hay tarifas adicionales al comprar entradas?</h3>
-                    <p>No, no cobramos tarifas adicionales. Tu satisfacción es nuestra prioridad.</p>
-                    <a href="faq.html" class="btn">Saber Más</a>
-                </div>
-                <video src="css/images/concert3.mp4" muted autoplay loop></video>
-            </div>
-        </div>
-
-        <div id="next" onclick="next()">></div>
-        <div id="prev" onclick="prev()"><</div>
-
-    </div>
-</section>
-
-<section class="contact" id="contact">
-    <h1 class="heading"><span>CONTÁCTANOS</span></h1>
-
-    <p>
-        Valoramos tus comentarios, preguntas o sugerencias.
-        Completa el formulario y nuestro equipo te responderá lo antes posible.
-    </p>
-
-    <div class="contactcon">
-        <form action="https://formspree.io/f/mwkdgerp" method="POST">
-
-            <div class="inputBox">
-                <input type="text" placeholder="Nombre" name="Name" value="<?php echo $fetch['fullname'] ?>">
-                <input type="email" value="<?php echo $fetch['email'] ?>" placeholder="Correo" name="Email" readonly>
-            </div>
-
-            <div class="inputBox">
-                <input type="number" placeholder="Número" name="Phonenumber" value="<?php echo $fetch['phonenum'] ?>" readonly>
-
-                <select name="subject" id="subjectSelect">
-                    <option value="" disabled selected>Selecciona un asunto</option>
-                    <option value="Unlinking a Credit Card">Desvincular tarjeta</option>
-                    <option value="Reporting a Bug">Reportar un error</option>
-                    <option value="Other">Otro</option>
-                </select>
-            </div>
-
-            <textarea name="Message" placeholder="Tu mensaje" cols="30" rows="10"></textarea>
-            <input type="submit" value="Enviar Mensaje" class="btn">
-
-        </form>
-
-        <image src="css/images/contact.png" class="contactimg">
-    </div>
-</section>
-
+</body>
 <footer>
-    <div class="row primary">
-
-        <div class="columncomp">
-            <h3>Musiverse.Corp</h3>
-            <p>
-                Bienvenido a Musiverse, tu puerta a un mundo de experiencias musicales en vivo.
-                Creemos en el poder de la música para inspirar y conectar.
-            </p>
-        </div>
-
-        <div class="column links">
-            <h3>Enlaces Rápidos</h3>
-            <ul>
-                <li><a href="faq.html">Preguntas Frecuentes</a></li>
-                <li><a href="ticketshistory.php">Entradas</a></li>
-                <li><a href="#Meet">Nuestro Equipo</a></li>
-                <li><a href="#concerts">Próximos Conciertos</a></li>
-            </ul>
-        </div>
-
-        <div class="column subscribe">
-            <form action="https://formspree.io/f/mwkdgerp" method="POST">
-                <h3>Suscribirse</h3>
-                <div>
-                    <input type="email" name="email" placeholder="Tu correo electrónico" />
-                    <button>Suscribirse</button>
-                </div>
-            </form>
-
-            <div class="social">
-                <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-square"></i></a>
-                <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram-square"></i></a>
-                <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter-square"></i></a>
-            </div>
-        </div>
-
-    </div>
 
     <div class="row secondary">
         <div>
@@ -373,6 +292,5 @@ $totalPages = ceil($totalConcerts / $itemsPerPage);
     </div>
 </footer>
 
-<script src="js/home.js"></script>
-</body>
+
 </html>
