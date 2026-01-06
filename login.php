@@ -30,24 +30,24 @@ if(isset($_POST['submit'])) {
         $_SESSION['admin_id'] = $row['admin_id'];
         header('location:adminside/dashboard.php');
     } else {
-        $message[] = '¡Correo o contraseña incorrectos!';
+        $message[] = 'incorrect email or password!';
     }
 }
 
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Login</title>
     <link rel="icon" type="image/x-icon" href="css/images/logo.png">
     <link rel="stylesheet" href="css/profile.css">
 </head>
 <body>
-    <div class="form-container">
+   <div class="form-container">
         <form action="" method="post" enctype="multipart/form-data">
             <h3 style="font-size:23px; color: #0D7377; word-spacing:3px; background-color:#333; border-radius: 5px; color: #30E3CA; box-shadow:0 10px 10px rgba(0,0,0,.1);"
                 class="headertext">
@@ -80,10 +80,16 @@ if(isset($_POST['submit'])) {
                 onclick="redirectToForgotPage()">
 
             <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a></p>
+            <!-- Botón de login con Google -->
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="<?= htmlspecialchars($login_url) ?>">
+                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Login with Google">
+                </a>
+            </div>
+
         </form>
     </div>
 </body>
-
 <script>
     function redirectToForgotPage() {
         window.location.href = "forgot.php";
